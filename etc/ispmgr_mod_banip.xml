@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Title: BanIp plugin.
+ * Version: 1.0.0 (8/Nov/2015)
+ * Author: Denis.
+ * License: GPL.
+ * Site: https://montenegro-it.com
+ * Email: contact@montenegro-it.com
+-->
+<mgrdata>
+    <plugin name="banip" version="1.0.0">
+        <name lang="ru">Просмотр сетевых соединений и блокировка по ip или подсетям</name>
+        <description lang="ru">Плагин предназначен для просмотра количества сетевых соединений и их возможной блокировки, использует кэширование для геозапросов</description>
+        <url>https://montenegro-it.com/files/banip.tar.gz</url>
+        <version>1.0</version>
+        <lang>php</lang>
+        <langver strict="no">5.2</langver>
+        <require>simplexml</require>
+        <manager>ispmgr</manager>
+        <author name="Montenegro IT" contacts="contact@montenegro-it.com">Montenegro IT</author>
+    </plugin>
+    <handler name="banip.php" type="xml">
+        <func minlevel="7">banip.run</func>
+        <func minlevel="7">banip.block</func>
+        <func minlevel="7">banip.stat</func>
+        <func minlevel="7">banip.list</func>
+        <func minlevel="7">banip.result</func>
+        <func minlevel="7">banip.delete</func>
+    </handler>
+    <mainmenu level="7" name="BanIp" startpage="wwwdomain">
+        <node name="tool">
+            <node name="banip.run"/>
+        </node>
+    </mainmenu>
+    <metadata name="banip.block" type="form">
+        <form>
+            <field name="time">
+                <select name="time"/>
+            </field>
+            <field name="subnet">
+                <input type="checkbox" name="subnet"/>
+                <desc name="subnet_desc"/>
+            </field>
+            <field name="debug">
+                <htmldata type="data" name="debug"/>
+            </field>
+        </form>
+    </metadata>
+    <metadata name="banip.list" type="list" key="ip" selficon="tool">
+        <toolbar>
+          <toolbtn func="banip.run" type="back" img="t-back" name="back"/> 
+          <toolsep/>
+            <toolbtn func="banip.delete" default="yes" type="groupform" img="t-delete" name="delete"/>  
+        </toolbar> 
+        <coldata>
+            <col name="ip" type="data" sort="ip"/>
+            <col name="hostname" sort="alpha" type="data"/>
+            <col name="country" sort="alpha" type="data"/>
+            <col name="time" type="data" sorted="desc" sort="digit"/>
+        </coldata>
+    </metadata>
+    <metadata name="banip.run" type="list" key="ip" selficon="tool">
+        <toolbar>
+            <toolbtn func="banip.list" type="list" img="t-redirect" name="isban"/>
+            <toolbtn func="banip.run" type="list" img="t-retry" name="update"/>
+            <toolbtn func="banip.block" default="yes" type="groupform" img="t-delete" name="delete"/>
+        </toolbar>
+        <coldata>
+            <col name="ip" type="data" sort="ip"/>
+            <col name="hostname" sort="alpha" type="data"/>
+            <col name="country" sort="alpha" type="data"/>
+            <col name="count" type="data" sorted="desc" sort="digit"/>
+        </coldata>
+    </metadata>
+    <lang name="ru">
+        <messages name="banip.list">
+            
+            <msg name="title">Список заблокированных адресов</msg> 
+            <msg name="short_delete">Разблокировать</msg>
+            <msg name="hint_delete">Удалить блокировку для выбранных ip</msg>
+            <msg name="ip">Ip адрес</msg>
+            <msg name="hostname">Хостнейм</msg>
+            <msg name="country">Страна</msg>
+            <msg name="time">Время до разблокировки</msg>
+        </messages>
+        <messages name="banip.block">
+            <msg name="time">Срок блокировки в минутах</msg>
+            <msg name="subnet_desc">Блокировать как /24 подсеть</msg>
+        </messages>
+        <messages name="banip.run">
+            <msg name="title">Сетевые соединения на сервере</msg>
+            <msg name="ip">Ip адрес</msg>
+            <msg name="short_update">Обновить</msg>
+            <msg name="hint_update">Обновить список текущих соединений</msg>
+            <msg name="short_isban">Заблокированные</msg>
+            <msg name="hint_isban">Список заблокированных ip адресов</msg>
+            <msg name="short_delete">Заблокировать</msg>
+            <msg name="hint_delete">Заблокировать выбранные адреса или подсети (ip адреса сервера и текущего администратора будут проигнорированы для безопасности!)</msg>
+            <msg name="hostname">Хостнейм</msg>
+            <msg name="country">Страна</msg>
+            <msg name="count">Количество соединений</msg>
+        </messages>
+        <messages name="desktop">
+            <msg name="menu_banip.run" level = "7">Блокировки ip</msg>
+        </messages>
+   
+    </lang>
+ 
+</mgrdata>
