@@ -1,4 +1,5 @@
 #!/bin/bash
 
 echo "* * * * * root /usr/local/ispmgr/addon/banip.cron.php  >/dev/null 2>&1" > /etc/cron.d/banip
+echo  "* * * * * root find /usr/local/ispmgr/var/.plugin_banip/ -type f -name 'cache.*' -atime +7 -delete >/dev/null 2>&1" >> /etc/cron.d/banip
 echo >> /etc/cron.d/banip

@@ -12,6 +12,7 @@
         <name lang="ru">Просмотр сетевых соединений и блокировка по ip или подсетям</name>
         <description lang="ru">Плагин предназначен для просмотра количества сетевых соединений и их возможной блокировки, использует кэширование для геозапросов</description>
         <url>https://montenegro-it.com/files/banip.tar.gz</url>
+        <site>https://montenegro-it.com/plugins/banip.html</site>
         <version>1.0</version>
         <lang>php</lang>
         <langver strict="no">5.2</langver>
@@ -103,5 +104,4 @@
             <msg name="menu_banip.run" level = "7">Блокировки ip</msg>
         </messages>
     </lang>
- 
 </mgrdata>
