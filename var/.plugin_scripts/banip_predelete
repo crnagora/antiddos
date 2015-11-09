@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm -r /etc/cron.d/banip
+rm -rf /usr/local/ispmgr/var/.plugin_banip

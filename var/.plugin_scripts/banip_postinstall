@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "* * * * * root /usr/local/ispmgr/addon/banip.cron.php  >/dev/null 2>&1" > /etc/cron.d/banip
+echo >> /etc/cron.d/banip

@@ -27,7 +27,7 @@
         <func minlevel="7">banip.result</func>
         <func minlevel="7">banip.delete</func>
     </handler>
-    <mainmenu level="7" name="BanIp" startpage="wwwdomain">
+    <mainmenu level="7" name="BanIp" startpage="banip.list">
         <node name="tool">
             <node name="banip.run"/>
         </node>
@@ -41,16 +41,12 @@
                 <input type="checkbox" name="subnet"/>
                 <desc name="subnet_desc"/>
             </field>
-            <field name="debug">
-                <htmldata type="data" name="debug"/>
-            </field>
         </form>
     </metadata>
     <metadata name="banip.list" type="list" key="ip" selficon="tool">
         <toolbar>
-          <toolbtn func="banip.run" type="back" img="t-back" name="back"/> 
-          <toolsep/>
-            <toolbtn func="banip.delete" default="yes" type="groupform" img="t-delete" name="delete"/>  
+            <toolbtn func="banip.run" type="back" img="t-back" name="back"/> 
+            <toolbtn func="banip.delete" type="group" img="t-delete" name="delete"/>  
         </toolbar> 
         <coldata>
             <col name="ip" type="data" sort="ip"/>
@@ -73,8 +69,11 @@
         </coldata>
     </metadata>
     <lang name="ru">
+        <messages name="alert">
+            <msg name="isban">Адреса заблокированы успешно. Нажмите "Подробнее" для просмотра.</msg>
+        </messages>
         <messages name="banip.list">
-            
+            <msg name="msg_banip_delete">Разблокировать</msg>
             <msg name="title">Список заблокированных адресов</msg> 
             <msg name="short_delete">Разблокировать</msg>
             <msg name="hint_delete">Удалить блокировку для выбранных ip</msg>
@@ -103,7 +102,6 @@
         <messages name="desktop">
             <msg name="menu_banip.run" level = "7">Блокировки ip</msg>
         </messages>
-   
     </lang>
  
 </mgrdata>
