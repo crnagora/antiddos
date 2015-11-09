@@ -27,6 +27,7 @@
         <func minlevel="7">banip.list</func>
         <func minlevel="7">banip.result</func>
         <func minlevel="7">banip.delete</func>
+        <func minlevel="7">banip.setting</func>
     </handler>
     <mainmenu level="7" name="BanIp" startpage="banip.list">
         <node name="tool">
@@ -34,7 +35,7 @@
         </node>
     </mainmenu>
     <metadata name="banip.block" type="form">
-        <form>
+        <form helpurl="https://montenegro-it.com/plugins/banip.html">
             <field name="time">
                 <select name="time"/>
             </field>
@@ -42,6 +43,41 @@
                 <input type="checkbox" name="subnet"/>
                 <desc name="subnet_desc"/>
             </field>
+        </form>
+    </metadata>
+    <metadata name="banip.setting" type="form">
+        <form helpurl="https://montenegro-it.com/plugins/banip.html">
+            <page name="general">
+                <field fullwidth="yes" name="warningtitle">
+                    <textdata name="warning" type="msg" warning="yes"/>
+                </field>
+                <field name="systemaddr">
+                    <textarea rows="5" name="systemaddr"/>
+                </field>
+                <field fullwidth="yes" name="infotitle">
+                    <textdata name="info" type="msg" />
+                </field>
+                <field name="count">
+                    <input type="text" width="32" maxlength="4" name="count"/>
+                </field>
+                <field name="email" zoom="5">
+                    <input type="text" name="email"/>
+                </field>
+                <field name="from">
+                    <input type="text" name="from"/>
+                </field>
+                <field name="time">
+                    <select name="time"/>
+                </field>
+                <field name="subnet">
+                    <input type="checkbox" name="subnet"/>
+                    <desc name="subnet_desc"/>
+                </field>
+                <field name="cron">
+                    <input type="checkbox" name="cron"/>
+                    <desc name="cron_desc"/>
+                </field>
+            </page>
         </form>
     </metadata>
     <metadata name="banip.list" type="list" key="ip" selficon="tool">
@@ -61,6 +97,7 @@
             <toolbtn func="banip.list" type="list" img="t-redirect" name="isban"/>
             <toolbtn func="banip.run" type="list" img="t-retry" name="update"/>
             <toolbtn func="banip.block" default="yes" type="groupform" img="t-delete" name="delete"/>
+            <toolbtn func="banip.setting" type="new" img="t-attr" name="setting"/>
         </toolbar>
         <coldata>
             <col name="ip" type="data" sort="ip"/>
@@ -73,6 +110,19 @@
         <messages name="alert">
             <msg name="isban">Адреса заблокированы успешно. Нажмите "Подробнее" для просмотра.</msg>
         </messages>
+        <messages name="banip.setting">
+            <msg name="from">Email отправителя уведомлений</msg>
+            <msg name="email">Email для уведомления о блокировках, укажите через запятую, или оставьте поле пустым, если не нужно уведомление.</msg>
+            <msg name="warning">Внимание! Будьте предельно внимательны при заполнении полей, не забудьте добавить подсети администраторов, если отсутствуют в белом списке ниже!</msg>
+            <msg name="info">Ниже указаны параметры используемые для автоматической блокировки:</msg>
+            <msg name="systemaddr">Белый список, не блокируется не зависимо от числа соединений</msg>
+            <msg name="systemaddr_desc">Адреса и диапазоны сервера и админов</msg>
+            <msg name="time">Срок блокировки в минутах</msg>
+            <msg name="count">Максимальное число соединений</msg>
+            <msg name="title">Автоматическая блокировка</msg>
+            <msg name="subnet_desc">Блокировать как /24 подсеть</msg>
+            <msg name="cron_desc">Включить автоматическую блокировку</msg>
+        </messages>
         <messages name="banip.list">
             <msg name="msg_banip_delete">Разблокировать</msg>
             <msg name="title">Список заблокированных адресов</msg> 
@@ -84,6 +134,7 @@
             <msg name="time">Время до разблокировки</msg>
         </messages>
         <messages name="banip.block">
+            <msg name="title">Заблокировать</msg>
             <msg name="time">Срок блокировки в минутах</msg>
             <msg name="subnet_desc">Блокировать как /24 подсеть</msg>
         </messages>
@@ -92,6 +143,8 @@
             <msg name="ip">Ip адрес</msg>
             <msg name="short_update">Обновить</msg>
             <msg name="hint_update">Обновить список текущих соединений</msg>
+            <msg name="short_setting">Настройка автобана</msg>
+            <msg name="hint_setting">Изменение настроек автоматической блокировки</msg>
             <msg name="short_isban">Заблокированные</msg>
             <msg name="hint_isban">Список заблокированных ip адресов</msg>
             <msg name="short_delete">Заблокировать</msg>

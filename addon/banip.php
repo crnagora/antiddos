@@ -2,7 +2,7 @@
 <?php
 /*
  * Title: BanIP plugin.
- * Version: 1.0.0 (8/Nov/2015)
+ * Version: 1.0.1 (9/Nov/2015)
  * Author: Denis.
  * License: GPL.
  * Site: https://montenegro-it.com 
@@ -39,6 +39,51 @@ switch ($func) {
             $val->addAttribute('key', $key);
         }
         break;
+    case "banip.setting";
+        if ($sok == "ok") {
+            BanIp::save_setting($doc->params->systemaddr, $doc->params->email, $doc->params->time, $doc->params->count, $doc->params->subnet, $doc->params->cron, $doc->params->from);
+            $doc->addChild("ok", "ok");
+            break;
+        }
+        if (is_file(PLUGIN_PATH . "setting.txt")) {
+            $data = json_decode(file_get_contents(PLUGIN_PATH . "setting.txt"));
+            $ip = implode(", ", array_unique(array_merge(BanIp::get_rootip(), BanIp::get_serverip(), $data->ip)));
+            $email = implode(", ", $data->email);
+            $time_select = $data->time;
+            $from = $data->from->{0};
+            $subnet = $data->subnet->{0};
+            $cron = $data->cron->{0};
+            $count = $data->count;
+        } else {
+            $ip = implode(", ", array_unique(array_merge(BanIp::get_rootip(), BanIp::get_serverip())));
+            $count = "300";
+            $email = "";
+            $subnet = "";
+            $from="root@".php_uname('n');
+            $cron = "";
+            $time_select = 99999999;
+        }
+        $doc->addChild("elid", "");
+        $doc->addChild("systemaddr", $ip);
+        $doc->addChild("email", $email);
+        $doc->addChild("count", $count);
+        $doc->addChild("from", $from);
+        if ($subnet) {
+            $doc->addChild("subnet", $subnet);
+        }
+        if ($cron) {
+            $doc->addChild("cron", $cron);
+        }
+        $time = array(5 => 5, 10 => 10, 15 => 15, 30 => 30, 60 => 60, 180 => 180, 1440 => 1400, 99999999 => 'unlimited',);
+        $slist = $doc->addChild('slist');
+        $slist->addAttribute('name', 'time');
+        foreach ($time AS $key => $row) {
+            $val = $slist->addChild('val', $row);
+            $val->addAttribute('key', $key);
+        }
+        $doc->addChild("time", $time_select);
+        break;
+
     case "banip.list";
 
         $rows = BanIp::get_ban();
