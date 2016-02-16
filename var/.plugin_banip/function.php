@@ -2,7 +2,7 @@
 
 /*
  * Title: BanIP plugin.
- * Version: 1.0.1 (9/Nov/2015)
+ * Version: 1.0.2 (16/Feb/2016)
  * Author: Denis.
  * License: GPL.
  * Site: https://montenegro-it.com 
@@ -125,9 +125,19 @@ class BanIp {
     }
 
     static public function get_listip() {
+        if (is_file(PLUGIN_PATH . "setting.txt")) {
+            $data = json_decode(file_get_contents(PLUGIN_PATH . "setting.txt"));
+            $array_ip = $data->ports;
+        } else {
+            $array_ip = "";
+        }
         $data = array();
         ob_start();
-        exec("netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr", $data);
+        if (is_array($array_ip)) {
+            exec("netstat -ntu | awk '{print $4,$5}'|grep  -E \"(" . implode("|", $array_ip) . ")\"|awk '{print $2}'| cut -d: -f1 | sort | uniq -c | sort -nr", $data);
+        } else {
+            exec("netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr", $data);
+        }
         $return = ob_get_contents();
         ob_end_clean();
         if ($return == 0) {
@@ -144,15 +154,20 @@ class BanIp {
         }
     }
 
-    static public function store_cache($ip) {
+    static public function store_cache($ip, $nogeo) {
         $list['hostname'] = htmlspecialchars(gethostbyaddr($ip));
         if (!$list['hostname']) {
             $list['hostname'] = "-";
         }
         //используется собственный сервис определения географии
-        $geo = json_decode(file_get_contents('https://ip2geo.link/json/en/' . $ip));
-        $list['country'] = $geo->country;
-        if (!$list['country']) {
+
+        if ($nogeo == 2) {
+            $geo = json_decode(file_get_contents('https://ip2geo.link/json/en/' . $ip));
+            $list['country'] = $geo->country;
+            if (!$list['country']) {
+                $list['country'] = "-";
+            }
+        } else {
             $list['country'] = "-";
         }
         $data = $list['hostname'] . ";" . $list['country'];
@@ -227,7 +242,7 @@ class BanIp {
         return $minutes;
     }
 
-    static public function get_countryhostname($ip) {
+    static public function get_countryhostname($ip, $nogeo) {
         $file_name = str_replace("/", "_", $ip);
         if (is_file(PLUGIN_PATH . "cache." . $file_name)) {
             $file = file_get_contents(PLUGIN_PATH . "cache." . $file_name);
@@ -236,19 +251,24 @@ class BanIp {
             $list['country'] = $data[1];
             return $list;
         } else {
-            return self::store_cache($ip);
+            return self::store_cache($ip, $nogeo);
         }
     }
 
-    static public function save_setting($ip, $email, $time, $count, $subnet, $cron, $from) {
+    static public function save_setting($ip, $email, $time, $count, $subnet, $cron, $from, $ports, $nogeo) {
         $tmp_ip = explode(",", $ip);
+        $tmp_ports = explode(",", $ports);
         $tmp_email = explode(",", $email);
         $ip_array = array();
+        $port_array = array();
         $email_array = array();
         foreach ($tmp_ip AS $row) {
             if (filter_var(trim($row), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
                 $ip_array[] = trim($row);
             }
+        }
+        foreach ($tmp_ports AS $row) {
+            $port_array[] = intval($row);
         }
         foreach ($tmp_email AS $row) {
             if (filter_var(trim($row), FILTER_VALIDATE_EMAIL)) {
@@ -259,11 +279,13 @@ class BanIp {
             $from = "root@" . php_uname('n');
         }
         $data['ip'] = $ip_array;
+        $data['ports'] = $port_array;
         $data['from'] = $from;
         $data['email'] = $email_array;
         $data['time'] = intval($time);
         $data['count'] = intval($count);
         $data['subnet'] = $subnet;
+        $data['nogeo'] = $nogeo;
         $data['cron'] = $cron;
         file_put_contents(PLUGIN_PATH . "setting.txt", json_encode($data));
     }

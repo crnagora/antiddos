@@ -2,7 +2,7 @@
 <?php
 /*
  * Title: BanIP plugin.
- * Version: 1.0.1 (9/Nov/2015)
+ * Version: 1.0.2 (16/Feb/2016)
  * Author: Denis.
  * License: GPL.
  * Site: https://montenegro-it.com 
@@ -41,7 +41,7 @@ switch ($func) {
         break;
     case "banip.setting";
         if ($sok == "ok") {
-            BanIp::save_setting($doc->params->systemaddr, $doc->params->email, $doc->params->time, $doc->params->count, $doc->params->subnet, $doc->params->cron, $doc->params->from);
+            BanIp::save_setting($doc->params->systemaddr, $doc->params->email, $doc->params->time, $doc->params->count, $doc->params->subnet, $doc->params->cron, $doc->params->from, $doc->params->ports, $doc->params->nogeo);
             $doc->addChild("ok", "ok");
             break;
         }
@@ -49,17 +49,24 @@ switch ($func) {
             $data = json_decode(file_get_contents(PLUGIN_PATH . "setting.txt"));
             $ip = implode(", ", array_unique(array_merge(BanIp::get_rootip(), BanIp::get_serverip(), $data->ip)));
             $email = implode(", ", $data->email);
+            $ports = implode(", ", $data->ports);
+            if ($ports == 0) {
+                $ports = "";
+            }
             $time_select = $data->time;
             $from = $data->from->{0};
             $subnet = $data->subnet->{0};
+            $nogeo = $data->nogeo->{0};
             $cron = $data->cron->{0};
             $count = $data->count;
         } else {
             $ip = implode(", ", array_unique(array_merge(BanIp::get_rootip(), BanIp::get_serverip())));
             $count = "300";
             $email = "";
+            $nogeo = "";
+            $ports = "";
             $subnet = "";
-            $from="root@".php_uname('n');
+            $from = "root@" . php_uname('n');
             $cron = "";
             $time_select = 99999999;
         }
@@ -68,8 +75,12 @@ switch ($func) {
         $doc->addChild("email", $email);
         $doc->addChild("count", $count);
         $doc->addChild("from", $from);
+        $doc->addChild("ports", $ports);
         if ($subnet) {
             $doc->addChild("subnet", $subnet);
+        }
+        if ($nogeo) {
+            $doc->addChild("nogeo", $nogeo);
         }
         if ($cron) {
             $doc->addChild("cron", $cron);
@@ -85,10 +96,18 @@ switch ($func) {
         break;
 
     case "banip.list";
+        $nogeo = 2;
+        if (is_file(PLUGIN_PATH . "setting.txt")) {
+            $data = json_decode(file_get_contents(PLUGIN_PATH . "setting.txt"));
+            $nogeo = $data->nogeo->{0};
+            if (!$nogeo) {
+                $nogeo = 2;
+            }
+        }
 
         $rows = BanIp::get_ban();
         foreach ($rows AS $ip) {
-            $data = BanIp::get_countryhostname($ip);
+            $data = BanIp::get_countryhostname($ip, $nogeo);
             $param = $doc->addChild('elem');
             $val = $param->addChild('ip', $ip);
             $val = $param->addChild('hostname', $data['hostname']);
@@ -98,9 +117,17 @@ switch ($func) {
 
         break;
     case "banip.run";
+        $nogeo = 2;
+        if (is_file(PLUGIN_PATH . "setting.txt")) {
+            $data = json_decode(file_get_contents(PLUGIN_PATH . "setting.txt"));
+            $nogeo = $data->nogeo->{0};
+            if (!$nogeo) {
+                $nogeo = 2;
+            }
+        }
         $rows = BanIp::get_listip();
         foreach ($rows AS $ip => $count) {
-            $data = BanIp::get_countryhostname($ip);
+            $data = BanIp::get_countryhostname($ip, $nogeo);
             $param = $doc->addChild('elem');
             $val = $param->addChild('ip', $ip);
             $val = $param->addChild('hostname', $data['hostname']);

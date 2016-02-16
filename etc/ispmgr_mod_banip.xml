@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * Title: BanIp plugin.
- * Version: 1.0.1 (9/Nov/2015)
+ * Version: 1.0.2 (16/Feb/2016)
  * Author: Denis.
  * License: GPL.
  * Site: https://montenegro-it.com
  * Email: contact@montenegro-it.com
 -->
 <mgrdata>
-    <plugin name="banip" version="1.0.1">
+    <plugin name="banip" version="1.0.2">
         <name lang="ru">Просмотр сетевых соединений и блокировка по ip или подсетям</name>
         <description lang="ru">Плагин предназначен для просмотра количества сетевых соединений и их возможной блокировки, использует кэширование для геозапросов</description>
         <url>https://montenegro-it.com/files/banip.tar.gz</url>
         <site>https://montenegro-it.com/plugins/banip.html</site>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
         <lang>php</lang>
         <langver strict="no">5.2</langver>
         <require>simplexml</require>
@@ -54,13 +54,20 @@
                 <field name="systemaddr">
                     <textarea rows="5" name="systemaddr"/>
                 </field>
+                 <field name="ports">
+                    <input type="text" name="ports"/>
+                </field>
+ <field name="nogeo">
+                    <input type="checkbox" name="nogeo"/>
+                    <desc name="nogeo_desc"/>
+                </field>
                 <field fullwidth="yes" name="infotitle">
                     <textdata name="info" type="msg" />
                 </field>
                 <field name="count">
                     <input type="text" width="32" maxlength="4" name="count"/>
                 </field>
-                <field name="email" zoom="5">
+                                <field name="email" zoom="5">
                     <input type="text" name="email"/>
                 </field>
                 <field name="from">
@@ -112,6 +119,9 @@
         </messages>
         <messages name="banip.setting">
             <msg name="from">Email отправителя уведомлений</msg>
+            <msg name="nogeo">Отключить использование ip2geo</msg>
+            <msg name="nogeo_desc">Ускоряет работу в случае проблем с сервисом ip2geo</msg>
+            <msg name="ports">Список портов для анализа, укажите через запятую или оставьте поле пустым для учета всех портов</msg>
             <msg name="email">Email для уведомления о блокировках, укажите через запятую, или оставьте поле пустым, если не нужно уведомление.</msg>
             <msg name="warning">Внимание! Будьте предельно внимательны при заполнении полей, не забудьте добавить подсети администраторов, если отсутствуют в белом списке ниже!</msg>
             <msg name="info">Ниже указаны параметры используемые для автоматической блокировки:</msg>
@@ -119,7 +129,7 @@
             <msg name="systemaddr_desc">Адреса и диапазоны сервера и админов</msg>
             <msg name="time">Срок блокировки в минутах</msg>
             <msg name="count">Максимальное число соединений</msg>
-            <msg name="title">Автоматическая блокировка</msg>
+            <msg name="title">Настройка плагина</msg>
             <msg name="subnet_desc">Блокировать как /24 подсеть</msg>
             <msg name="cron_desc">Включить автоматическую блокировку</msg>
         </messages>
@@ -143,7 +153,7 @@
             <msg name="ip">Ip адрес</msg>
             <msg name="short_update">Обновить</msg>
             <msg name="hint_update">Обновить список текущих соединений</msg>
-            <msg name="short_setting">Настройка автобана</msg>
+            <msg name="short_setting">Настройка</msg>
             <msg name="hint_setting">Изменение настроек автоматической блокировки</msg>
             <msg name="short_isban">Заблокированные</msg>
             <msg name="hint_isban">Список заблокированных ip адресов</msg>
